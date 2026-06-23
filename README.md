@@ -10,6 +10,12 @@
 irm https://raw.githubusercontent.com/wangneal/kcode-install/main/scripts/install-kcode.ps1 | iex
 ```
 
+**macOS / Linux**
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/wangneal/kcode-install/main/scripts/install-kcode.sh | sh
+```
+
 **鎵嬪姩 / 鎸囧畾鐗堟湰**
 
 ```bash
