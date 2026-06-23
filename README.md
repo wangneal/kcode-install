@@ -1,10 +1,8 @@
-# kcode-install
+﻿# kcode-install
 
-公开安装入口：一键安装金蝶编码助手 **kcode**（npm 包 [kcode-pi](https://www.npmjs.com/package/kcode-pi)）。
-
-源码 monorepo 为私有仓；本仓仅同步 `scripts/install-kcode.*`。
-
-## 安装
+鍏紑瀹夎鍏ュ彛锛氫竴閿畨瑁呴噾铦剁紪鐮佸姪鎵?**kcode**锛坣pm 鍖?[kcode-pi](https://www.npmjs.com/package/kcode-pi)锛夈€?
+婧愮爜 monorepo 涓虹鏈変粨锛涙湰浠撲粎鍚屾 `scripts/install-kcode.*`銆?
+## 瀹夎
 
 **Windows (PowerShell)**
 
@@ -12,35 +10,18 @@
 irm https://raw.githubusercontent.com/wangneal/kcode-install/main/scripts/install-kcode.ps1 | iex
 ```
 
-指定版本：
-
-```powershell
-irm https://raw.githubusercontent.com/wangneal/kcode-install/main/scripts/install-kcode.ps1 | iex; install-kcode.ps1 -Version 0.2.11
-```
-
-（若管道后无法带参，可先下载再执行：`irm ... -OutFile install-kcode.ps1; .\install-kcode.ps1 -Version 0.2.11`）
-
-**macOS / Linux**
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/wangneal/kcode-install/main/scripts/install-kcode.sh | sh
-```
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/wangneal/kcode-install/main/scripts/install-kcode.sh | sh -s -- --version 0.2.11
-```
-
-**手动**
+**鎵嬪姩 / 鎸囧畾鐗堟湰**
 
 ```bash
-npm install -g kcode-pi@0.2.11
+npm install -g kcode-pi
+# 鎴栧畨瑁呮寚瀹氱増鏈細
+# npm install -g kcode-pi@0.2.13
 ```
 
-需 [Bun](https://bun.sh) ≥ 1.3.14。
+闇€ [Bun](https://bun.sh) 鈮?1.3.14銆?
+## 缁存姢锛堢淮鎶よ€咃級
 
-## 维护（维护者）
-
-在 KCodeV2 主仓修改 `scripts/install-kcode.ps1` / `.sh` 后执行：
+鍦?KCodeV2 涓讳粨淇敼 `scripts/install-kcode.ps1` / `.sh` 鍚庢墽琛岋細
 
 ```powershell
 .\scripts\sync-kcode-install-repo.ps1

@@ -1,12 +1,12 @@
 # kcode (kcode-pi) Installer for Windows — 对齐 oh-my-pi install.ps1（无独立二进制，需 Bun）
 # Usage: irm https://raw.githubusercontent.com/wangneal/kcode-install/main/scripts/install-kcode.ps1 | iex
 #
-#   irm .../install-kcode.ps1 -OutFile install-kcode.ps1; .\install-kcode.ps1 -Version 0.2.11
+#   irm .../install-kcode.ps1 -OutFile install-kcode.ps1; .\install-kcode.ps1 -Version <version>
 #   .\install-kcode.ps1 -Source   # 需能 clone 主仓（通常仅维护者）
 
 param(
     [switch]$Source,
-    [string]$Ref = "migrate-omp",
+    [string]$Ref = "main",
     [string]$Version = ""
 )
 

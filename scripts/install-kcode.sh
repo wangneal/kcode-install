@@ -5,13 +5,13 @@ set -e
 # Usage: curl -fsSL https://raw.githubusercontent.com/wangneal/kcode-install/main/scripts/install-kcode.sh | sh
 #
 #   --source          clone repo + bun install -g packages/kd-core
-#   --ref <ref>       branch/tag (default: migrate-omp)
-#   --version <ver>   npm pin e.g. 0.2.4
+#   --ref <ref>       branch/tag (default: main)
+#   --version <ver>   npm pin
 
 REPO="wangneal/kcode-pi"
 NPM_PACKAGE="kcode-pi"
 MIN_BUN_VERSION="1.3.14"
-REF="migrate-omp"
+REF="main"
 VERSION=""
 MODE=""
 
