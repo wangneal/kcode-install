@@ -19,12 +19,26 @@ cd /path/to/your/erp-project
 kcode                 # 进入 omp 交互界面（TUI）
 ```
 
-**首次**在某业务项目执行 `kcode` 时，若文件不存在会自动生成（**不覆盖**已有文件）：
+### 首次 `kcode init`（**必须显式触发**）
 
-- `AGENTS.md`、`CLAUDE.md`（包内模板）
-- `OpenSpec/project.md`、`OpenSpec/roadmap.md`、`OpenSpec/AGENTS.md`（`project.md` / `roadmap.md` 按当前目录扫描）
+**kcode 不会**再自动生成项目脚手架。在业务项目根目录**必须先**运行一次：
 
-终端会提示：**先阅读 `OpenSpec/project.md` 确认产品线**，再开始开发。
+```bash
+# 苍穹/星瀚/旗舰版（COSMIC Java）
+kcode init --cosmic
+
+# 企业版 C# / IronPython
+kcode init --enterprise
+```
+
+`kcode init` 会**仅生成不存在的文件**：
+
+- `.trellis/workflow.md`、`.trellis/spec/`、`.trellis/tasks/`、`.trellis/config.yaml`（Trellis 工作流目录）
+- `.pi/settings.json`、`.pi/extensions/`、`.pi/skills/`、`.pi/agents/`（Pi 平台配置）
+- `AGENTS.md`、`CLAUDE.md`（项目入口）
+- `.trellis/spec/project/index.md`「产品画像」节
+
+之后直接 `kcode` 即可启动会话。
 
 ## 2. 模型与认证
 
@@ -50,16 +64,13 @@ kcode
 
 | 命令 | 说明 |
 |------|------|
-| `kcode` | 启动助手 |
-| `kcode -v` / `--version` | 版本 |
-| `kcode --help` | 帮助 |
-| `kcode product show` | 查看 `OpenSpec/project.md`「产品画像」 |
-| `kcode product set <id>` | 在「产品画像」中**添加**产品 ID |
-| `kcode product remove <id>` | 从「产品画像」中移除 |
-| `kcode db show` | 数据库 MCP 与凭证状态（只读） |
-| `kcode db init` | 生成/更新 `.mcp.json`、`.omp/mcp-db-connect.yml` |
+| `kcode` | 启动助手（已 init 则直接进会话；未 init 时提示运行 `kcode init`） |
+| `kcode init --cosmic` | 初始化苍穹/星瀚/旗舰版项目 |
+| `kcode init --enterprise` | 初始化企业版 C# / Python 项目 |
+| `kcode --version` / `-v` | 显示版本号 |
+| `kcode --help` / `-h` | 显示帮助信息 |
 
-当前 CLI **没有** `kcode knowledge`；团队文档放在项目内，由助手在对话中 `read`，或依赖随包 **skills**。
+**已删除**的旧子命令（0.2.20 之前版本用过）：`kcode product show / set / remove`、`kcode db show / init`。当前 CLI 没有任何 `kcode product *` 或 `kcode db *` 子命令——产品线在 `kcode init` 时选择，数据库 MCP 由 `kingdee-mcp` 扩展在会话启动时自动配置。
 
 ## 4. 在会话里怎么用
 
@@ -75,47 +86,49 @@ kcode
 
 ### 产品画像
 
-真源：**`OpenSpec/project.md`「产品画像」**。结合需求、代码库、已加载 skill 判断；不明确则先问用户，确认后 `kcode product set <id>` 或手改该节。
+真源：**`.trellis/spec/project/index.md`「产品画像」**（兼容旧 `OpenSpec/project.md`）。结合需求、代码库、已加载 skill 判断；不明确则先问用户，确认后：
 
-参考 ID（以模板为准）：
+- 重跑 `kcode init --cosmic` / `kcode init --enterprise` 改写
+- 或直接编辑 `.trellis/spec/project/index.md` 的「产品画像」节
+
+参考 ID（以 `kcode init` 选择为准）：
 
 | id | 含义 |
 |----|------|
 | `cangqiong` | 苍穹 / Cosmic Java |
-| `xinghan` | 星瀚 |
-| `flagship` | 星空旗舰版 |
-| `enterprise-csharp` | 企业版 C# |
-| `enterprise-ironpython` | 企业版 IronPython |
-| `enterprise-openapi` | 企业版 OpenAPI 等 |
+| `enterprise` | 企业版（C# / IronPython） |
 
 每轮开始前会把画像摘要注入上下文；未确认时会提示先确认再编码。
 
-### Git（自动）
+### Git
 
-- `git commit` 可能被拦截，要求先按 skill 做代码审查再提交。
-- `git push` 成功后会提示写 `OpenSpec/handoffs/<sessionId>.md` 交接文档。
+`kcode 0.2.20` **不再**自动拦截 `git commit` / `git push`（早期版本的 kingdee-git-workflow 扩展已删除）。开发者直接用 git 即可。
 
 ## 5. 数据库 MCP
 
-```bash
-kcode db init
-kcode db show
-```
+凭证写在项目 **`.omp/settings.json` 的 `db` 字段**（勿把密钥提交 Git）；`kingdee-mcp` 扩展在会话启动时**自动**按此配置生成 `.mcp.json`。
 
-凭证写在项目 **`.omp/settings.json` 的 `db` 字段**（勿把密钥提交 Git）；`kcode db init` 维护 **`.mcp.json`**。
+`kd-core` 模板自带默认 `kingdee-mcp` 配置（Postgres / SQL Server / Oracle 等）。如需调整数据库类型或凭证：
+
+1. 编辑项目根 `.omp/settings.json` 的 `db` 字段
+2. 重启 `kcode` 会话
 
 ## 6. 配置与目录
 
 | 路径 | 用途 |
 |------|------|
-| `OpenSpec/project.md` | 产品画像（真源） |
-| `OpenSpec/roadmap.md` | 路线图 |
-| `OpenSpec/handoffs/` | 交接文档 |
+| `.trellis/workflow.md` | Trellis 工作流定义 |
+| `.trellis/spec/` | 编码规范与领域 spec |
+| `.trellis/spec/project/index.md` | 产品画像（真源） |
+| `.trellis/tasks/` | 任务管理（PRDs、context） |
+| `.pi/` | Pi 平台配置（skills、agents、extensions） |
+| `AGENTS.md` | AI 协作入口（kcode 启动时读取） |
+| `CLAUDE.md` | 会话级 AI 协作规则 |
 | `.omp/settings.json` | 项目 omp 设置（含 `db`） |
-| `.mcp.json` | MCP 声明 |
+| `.mcp.json` | MCP 声明（由 kingdee-mcp 自动生成） |
 | `~/.omp/agent/` | 用户级模型与设置 |
 
-旧文档中的 `.pi/`、`kcode knowledge`、`/kd` Loop、`kd_search` 等**可能已不适用**；以 `kcode --help` 与本文为准。
+旧版本中的 `OpenSpec/AGENTS.md` / `OpenSpec/project.md` / `OpenSpec/handoffs/`、`.pi/` 早期用法、`kcode knowledge`、`/kd` Loop、`kd_search`、`kd commit` 等**已不适用**；以 `kcode --help` 与本文为准。
 
 ## 7. 升级
 
@@ -130,11 +143,13 @@ kcode --version
 
 | 现象 | 建议 |
 |------|------|
-| 找不到 `kcode` | 重开终端；检查 npm 全局 PATH |
-| 无可用模型 | `/login` 或配置 API Key |
-| 产品线未确认 | `kcode product show` / `set` / 编辑 `OpenSpec/project.md` |
-| db MCP 未就绪 | 配置 `.omp/settings.json` 的 `db` 后 `kcode db init` |
-| Windows bash 异常 | 安装 Git for Windows |
+| 找不到 `kcode` | 重开终端；检查 npm 全局 PATH（Windows 常见 `%AppData%\npm`） |
+| 无可用模型 | 会话内 `/login` 或配置 API Key |
+| 项目未初始化 | 运行 `kcode init --cosmic` 或 `kcode init --enterprise` |
+| 不知道当前产品线 | `read .trellis/spec/project/index.md`（兼容旧 `OpenSpec/project.md`） |
+| 数据库 MCP 未就绪 | 编辑 `.omp/settings.json` 的 `db` 字段后重启 `kcode` |
+| Windows bash 异常 | 安装 [Git for Windows](https://git-scm.com/download/win) |
+| Bun 版本过低 | 按 https://bun.sh/docs/installation 升级后重跑安装脚本 |
 
 ## 9. 进一步说明
 
